@@ -26,9 +26,10 @@ addons:
 
 install:
   - git clone https://github.com/materials-commons/materialscommons.org.git
-  - cd python
+  - pushd python
   - pip install -r requirements.txt
   - python setup.py install --user
+  - popd
   - sudo more /etc/hosts
 
 before_script:
@@ -41,5 +42,7 @@ before_script:
   - nginx -c `pwd`/test_setup/nginx.conf
 
 script:
-  - pytest
+  - pushd python
+  - pytest test
+  - popd
 
