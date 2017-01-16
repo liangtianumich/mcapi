@@ -15,20 +15,30 @@ env:
     - MCDB_CONNECTION=localhost:$MCDB_PORT
     - RETHINKDB_CLUSTER_PORT=31815
     - RETHINKDB_HTTP_PORT=8090
+    - MC_SERVICE_PORT=5002
+    - MC_API_SERVICE_PORT=5004
+    - MC_LOG_DIR=/tmp
+
+addons:
+  apt:
+    packages:
+    - nginx
 
 install:
   - git clone https://github.com/materials-commons/materialscommons.org.git
-  - pushd materialscommons.org/backend
-  - sh mcservers start -u
-  - popd
   - cd python
   - pip install -r requirements.txt
   - python setup.py install --user
+  - sudo more /etc/hosts
 
 before_script:
+  - pushd materialscommons.org/backend/
+  - ./mcapiserver.py -p $MC_SERVICE_PORT > ${MC_LOG_DIR}/mcapiserver.out.test 2>&1&
+  - popd
   - rethinkdb --driver-port $MCDB_PORT --cluster-port $RETHINKDB_CLUSTER_PORT --http-port $RETHINKDB_HTTP_PORT --daemon
   - sleep 5
   - rethinkdb restore $MCDB_FILE --connect $MCDB_CONNECTION --force
+  - nginx -c `pwd`/test_setup/nginx.conf
 
 script:
   - pytest
