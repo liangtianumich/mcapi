@@ -19,7 +19,7 @@ env:
 install:
   - git clone https://github.com/materials-commons/materialscommons.org.git
   - pushd materialscommons.org/backend
-  - ./mcservers start -u
+  - sh mcservers start -u
   - popd
   - cd python
   - pip install -r requirements.txt
