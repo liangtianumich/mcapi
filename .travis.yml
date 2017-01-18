@@ -30,6 +30,7 @@ install:
   - pip install -r requirements.txt
   - python setup.py install --user
   - popd
+  - sudo 
   - sudo more /etc/hosts
 
 before_script:
